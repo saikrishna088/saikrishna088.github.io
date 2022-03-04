@@ -223,7 +223,8 @@
 				var w = 500;
 				var h = 100;
 				
-				function draw_deaths(){ 
+				function draw_deaths(d_type){ 
+								
 				var selection_deaths = selection_zoom.selectAll('circle').data(deaths_age_sex).enter().append('circle');
 				
 				selection_deaths			
@@ -235,13 +236,17 @@
 			    })
 			    .attr("r", 2)
 			    .attr("fill",function(d) {
-				if (d["age"] ==0) {return "#FF0000"}
-				else if (d["age"] ==1){return "#DF9D08"}
-				else if (d["age"] ==2){return "#B4BC37"}	
-				else if (d["age"] ==3){return "#28CB06"}	
-				else if (d["age"] ==4){return "#22987A"}		
-				else if (d["age"] ==5){return "#5761C8"}
-			    	}).on("mouseover", function(d){ 
+				if(d_type=="bygender"){
+					if (d["gender"] ==0) {return "blue"}
+					else if (d["gender"] ==1){return "#F905C5"}}
+				else{
+					if (d["age"] ==0) {return "#FF0000"}
+					else if (d["age"] ==1){return "#DF9D08"}
+					else if (d["age"] ==2){return "#B4BC37"}	
+					else if (d["age"] ==3){return "#28CB06"}	
+					else if (d["age"] ==4){return "#22987A"}		
+					else if (d["age"] ==5){return "#5761C8"}
+			    	}}).on("mouseover", function(d){ 
 					dict_gender = {0:'Male',1:'Female'}; 
 					dict_age = {0:'0-10',1:'11-20',2:'21-40',3:'41-60',4:'61-80',5:'>80'};
 					console.log(d['x'],d['y']);
@@ -251,7 +256,7 @@
 					.on("mousemove", function(){return tooltext.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})/////*************
 					.on("mouseout", function(){
 					console.log("mouse out");
-					draw_deaths();
+					draw_deaths('byage');
 					
 					return tooltext.style("visibility", "hidden");}) 
 					.on("click",function(d){
@@ -334,20 +339,7 @@
 					});*/
 				d3.select("span").on("click", function(){
 					selection_zoom.selectAll('circle').remove();
-					selection_zoom.selectAll('circle') 
-					   .data(deaths_age_sex)
-					   .enter()
-					   .append('circle')
-					   .attr("cx",function(d) {
-						   return  d["x"]*20+75;
-					   })
-					   .attr("cy", function(d) {
-			   		return (1-d["y"]*20 +400);
-					})
-					.attr("r", 2)
-					.attr("fill",function(d){
-				if (d["gender"] ==0) {return "blue"}
-				else if (d["gender"] ==1){return "#F905C5"}
+					draw_deaths("bygender");
 			    });  
 				
 				//call to death_data
@@ -363,11 +355,10 @@
 							.attr("rx",5)
 							.attr("ry", 5)
 							.attr("fill","#DF9D08");
-				}); 
 			   
 			   d3.select("b").on("click", function(){
 					d3.select('#main1').selectAll('circle').remove();
-					draw_deaths();
+					draw_deaths('byage');
 					
 			   
 				});
@@ -433,7 +424,7 @@
 					.on("mouseout", function(){ 
 					
 					d3.select('#main1').selectAll('circle').remove();
-					draw_deaths();
+					draw_deaths('byage');
 					return tooltext1.style("visibility", "hidden")});
 					 
 					 
