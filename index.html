@@ -70,39 +70,60 @@
                 width:50%;
                 height:500px;
             }
+			h1 {
+                text-align: center;
+            }
+			
+			#toptext {
+		text-indent: 220px;
+		padding: 0;
+		font-style: bold;
+		font-size: 2em;
+		color: black;
+		position: absolute;
+		}
 
 		</style>
 	</head>
 	<body>
-		<svg id="first" width = "100%" height = "20%" style="border:2px solid blue;">
-			<text id='label' x='30' y='20'>first</text>
+	<h1>Recreation of Dr.John Snow's Cholera Map using D3.js</h1>
+		  <svg id="first" width = "100%" height = "20%">
 		</svg>
 		<div id="leftbox">
-		<svg id="main1" width = "100%" height = "100%" style="border:2px solid red;">
-			<text id='label1' x='30' y='20'>svg1</text>
+		<svg id="main1" width = "100%" height = "100%" >
+			<text style="font-weight:bold;font-size:20" id='label1' x='296' y='16'>Street Map</text>
 			<g transform="translate(0,0)"> </g>
 			</svg>
+			
 		</div>
-		
+	
 		<div id="rightbox">   
-		<svg id="main2" width = "100%" height = "100%" style="border:2px solid black;">
-			<text id='label2' x='30' y='20'>svg2</text>
+		<svg id="main2" width = "100%" height = "100%">
+			<text style="font-weight:bold;font-size:20" id='label2' x='200' y='20'>Deaths between 19-Aug and 29-Sep</text>
 			<n transform="translate(700,0)"> </n> 
+			<line x1="35" x2="680" y1="420" y2="420" stroke="black"></line>
+			<line x1="35" x2="35" y1="100" y2="420" stroke="black"></line>
+			<text x='250' y='435'>Dates from 19-Aug to 29-Sep</text>
+			
+			
 			</svg>
 		</div>
 		
-		<p> Click on the text to update the chart with <span style='font-weight:bold;color:blue';>death by gender </span> , <b style='color:red'; >death by age / Reset chart</b> </h5> </p> 
-		
+		<p style="font-size:25;"> Click on the text to view by: <span style='font-weight:bold;color:blue';>*death by gender </span> , <b style='color:red'; >*death by age / *Reset chart</b> </h5> </p> 
+		<svg id="text" width = "100%" height = "40">
+			<text style="font-weight:bold;font-size:20"id='label3' x='190' y='30'>Deaths by Age</text>
+			<text style="font-weight:bold;font-size:20" id='label4' x='890' y='30'>Deaths by Gender</text>
+			<g transform="translate(40,40)"> </g>
+		</svg>
 		<div id="leftbox">
-		<svg id="bar" width = "100%" height = "65%" style="border:2px solid green;">
-			<text id='label3' x='30' y='20'>svg3</text>
-			<g transform="translate(0,0)"> </g>
+		<svg id="donut" width = "80%" height = "400" >
+			<g transform="translate(40,40)"> </g>
 			</svg>
 		</div>
 		
 		<div id="rightbox">
-		<svg id="pie" width = "100%" height = "65%" style="border:2px solid orange;">
-			<text id='label4' x='30' y='20'>svg4</text>
+		<svg id="pie" width = "100%" height = "400">
+			
 			<n transform="translate(700,0)"> </n> 
 			</svg>
 		</div>
@@ -112,7 +133,8 @@
 		<div id="tooltip" class="hidden">
 			<p><strong></strong></p>
 			<p><span id="value"></span></p>
-		</div> 
+		</div>
+			
 		<script> 
 		//ref: side by side svg https://stackoverflow.com/questions/11333251/how-to-make-two-inser-svg-elements-side-by-side-in-a-bigger-div
 					
@@ -138,23 +160,43 @@
 				   data_streets=data;
 				   draw_street();
 				   });
-				var data_ddays=[];
-				d3.csv("deathdays.csv", function(data1) { 
-				   data_ddays=data1;
-				   draw_ddays();
-				   });  
+				
 
 				var data_pumps=[];
 				d3.csv('pumps.csv', function(data3) {
 				data_pumps=data3;          
 				draw_pumps();
 					});
-
+				
 				var deaths_age_sex=[];
+				var deaths_age_sex_count=[];
+				var age_group_1=age_group_2=age_group_3=age_group_4=age_group_5=age_group_6=0;
 				d3.csv('deaths_age_sex.csv', function(data2) {
 				deaths_age_sex=data2;
 				draw_deaths();
+				for(var i=0;i<deaths_age_sex.length;i++){ 
+					deaths_age_sex_count=deaths_age_sex[i]["age"];
+
+					if(deaths_age_sex_count==0){
+					age_group_1+=1;}
+					else if(deaths_age_sex_count==1){ 
+					age_group_2+=1;}
+					else if(deaths_age_sex_count==2){
+					age_group_3+=1;}
+					else if(deaths_age_sex_count==3){
+					age_group_4+=1;}
+					else if(deaths_age_sex_count==4){
+					age_group_5+=1;}
+					else if(deaths_age_sex_count==5){
+					age_group_6+=1;}}
+					draw_donut();
 					});
+				
+				var data_ddays=[];
+				d3.csv("deathdays.csv", function(data1) { 
+				   data_ddays=data1;
+				   draw_ddays();
+				   });  
 				 
 				var selection_zoom = d3.select("#main1")
 				  .attr("width", "100%")
@@ -164,45 +206,57 @@
 				   selection_zoom.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
 				  }))
 				  .append("g")
+				var selection_ddays = d3.select('#main2')//.selectAll('circle').data(data_ddays).enter().append('circle');
+				.attr("width", "100%")
+				  .attr("height", "100%")
+				  .attr("overflow", "visible")
+				  .call(d3.behavior.zoom().on("zoom", function () {
+				   selection_ddays.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+				  }))
+				  .append("g")
+				  
+				var mul = 30;
+				var add_x = -5;
+				var add_y = 560;
 
 				function draw_street(){ //fn to draw streets outline
 				var selection_street = selection_zoom.selectAll('line').data(data_streets);
 				var line = selection_street.enter().append('line');
 				
 				line.attr("x1", function(d) {
-						return d[0]["x"]*20+75;
+						return d[0]["x"]*mul+add_x;
 				   })
 				   .attr("y1", function(d) {
-						return (1-d[0]["y"])*20+400;
+						return (1-d[0]["y"])*mul+add_y;
 				   })
 				   .attr("x2", function(d) {
-						return d[1]["x"]*20+75;
+						return d[1]["x"]*mul+add_x;
 				   })
 				   .attr("y2", function(d) {
-						return (1-d[1]["y"])*20+400;
+						return (1-d[1]["y"])*mul+add_y;
 				   }).attr("stroke","black")
-				   .attr("stroke-width","2");
+				   .attr("stroke-width","1");
 				   
 				   
 				for (let k=2; k<14;k++){
 					selection_street.enter().append('line').attr("x1", function(d) {
 						if(d.length>k){
 						console.log(k,k-2)
-						return d[k-1]["x"]*20+75;}
+						return d[k-1]["x"]*mul+add_x;}
 				   })
 				   .attr("y1", function(d) {
 						if(d.length>k){
-						return (1-d[k-1]["y"])*20+400;}
+						return (1-d[k-1]["y"])*mul+add_y;}
 				   })
 				   .attr("x2", function(d) {
 						if(d.length>k){
-						return d[k]["x"]*20+75;}
+						return d[k]["x"]*mul+add_x;}
 				   })
 				   .attr("y2", function(d) {
 						if(d.length>k){
-						return (1-d[k]["y"])*20+400;}
+						return (1-d[k]["y"])*mul+add_y;}
 				   }).attr("stroke","black")
-				   .attr("stroke-width","2");
+				   .attr("stroke-width","1");
 				   }
 			
 				}
@@ -210,10 +264,10 @@
 				 function draw_pumps(){ 
 				 var selection_pumps = selection_zoom.selectAll('rect').data(data_pumps).enter().append('rect'); 
 				 selection_pumps.attr("x", function(d) { 
-			   		return d["x"]*20+75;
+			   		return d["x"]*mul+add_x;
 			     })
 			     .attr("y", function(d) { 
-			   		return ((1-d["y"])*20 +400);
+			   		return ((1-d["y"])*mul+add_y);
 			     })
 			     .attr("width", 12)
 			     .attr("height",12)
@@ -223,30 +277,25 @@
 				var w = 500;
 				var h = 100;
 				
-				function draw_deaths(d_type){ 
-								
+				function draw_deaths(){ 
 				var selection_deaths = selection_zoom.selectAll('circle').data(deaths_age_sex).enter().append('circle');
 				
 				selection_deaths			
 				.attr("cx", function(d) {
-			   		return d["x"]*20+75;
+			   		return d["x"]*mul+add_x;
 			    })
 			    .attr("cy", function(d) {
-			   		return (1-d["y"]*20 +400);
+			   		return (1-d["y"])*mul+add_y;
 			    })
 			    .attr("r", 2)
 			    .attr("fill",function(d) {
-				if(d_type=="bygender"){
-					if (d["gender"] ==0) {return "blue"}
-					else if (d["gender"] ==1){return "#F905C5"}}
-				else{
-					if (d["age"] ==0) {return "#FF0000"}
-					else if (d["age"] ==1){return "#DF9D08"}
-					else if (d["age"] ==2){return "#B4BC37"}	
-					else if (d["age"] ==3){return "#28CB06"}	
-					else if (d["age"] ==4){return "#22987A"}		
-					else if (d["age"] ==5){return "#5761C8"}
-			    	}}).on("mouseover", function(d){ 
+				if (d["age"] ==0) {return "#FF0000"}
+				else if (d["age"] ==1){return "#DF9D08"}
+				else if (d["age"] ==2){return "#B4BC37"}	
+				else if (d["age"] ==3){return "#28CB06"}	
+				else if (d["age"] ==4){return "#22987A"}		
+				else if (d["age"] ==5){return "#5761C8"}
+			    	}).on("mouseover", function(d){ 
 					dict_gender = {0:'Male',1:'Female'}; 
 					dict_age = {0:'0-10',1:'11-20',2:'21-40',3:'41-60',4:'61-80',5:'>80'};
 					console.log(d['x'],d['y']);
@@ -255,13 +304,13 @@
 					return tooltext.style("visibility", "visible");})
 					.on("mousemove", function(){return tooltext.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})/////*************
 					.on("mouseout", function(){
-					console.log("mouse out");
-					draw_deaths('byage');
+					//console.log("mouse out");
+					draw_deaths();
 					
 					return tooltext.style("visibility", "hidden");}) 
-					.on("click",function(d){
+					.on("click",function(d){//first click
 					
-					function cluster(d){
+					function cluster(d,radious){
 					let x=parseFloat(d['x']),y=parseFloat(d['y']);
 					radious_points=[];
 					function getDistance(x1, y1, x2, y2){
@@ -272,33 +321,49 @@
 					for (let k=0;k<deaths_age_sex.length;k++){
 					var x1=parseFloat(deaths_age_sex[k]['x']),y1=parseFloat(deaths_age_sex[k]['y']);
 					dist = getDistance(x,y,x1,y1);
-					if(dist<=2){
+					if(dist<=radious){
 					radious_points.push(deaths_age_sex[k]);
-					}} return radious_points;} 					
-					cluster_data = cluster(d);
-					selection_zoom.selectAll('circle').remove();
-					selection_zoom.selectAll('circle')
-					   .data(cluster_data)
-					   .enter()
-					   .append('circle')
-					   .attr("cx",function(p) {
-						   return  p["x"]*20+75;
-					   })
-					   .attr("cy", function(p) {
-			   		return (1-p["y"]*20 +400);
-						})
-						.attr("r", 3)
-						.attr("fill",function(p){
-						if (p["age"] ==0) {return "#FF0000"}
-						else if (p["age"] ==1){return "#DF9D08"}
-						else if (p["age"] ==2){return "#B4BC37"}	
-						else if (p["age"] ==3){return "#28CB06"}	
-						else if (p["age"] ==4){return "#22987A"}		
-						else if (p["age"] ==5){return "#5761C8"}
-							});
-							console.log("time",d.duration);
+					}} return radious_points;}
 					
-					return tooltext.style("visibility", "hidden");});/*
+					cluster_data = cluster(d,2);
+					
+					function clicked(cluster_data){				
+						selection_zoom.selectAll('circle').remove();
+						selection_zoom.selectAll('circle')
+						   .data(cluster_data)
+						   .enter()
+						   .append('circle')
+						   .attr("cx",function(p) {
+							   return  p["x"]*mul+add_x;
+						   })
+						   .attr("cy", function(p) {
+							return (1-p["y"])*mul+add_y;
+							})
+							.attr("r", 3)
+							.attr("fill",function(p){
+							if (p["age"] ==0) {return "#FF0000"}
+							else if (p["age"] ==1){return "#DF9D08"}
+							else if (p["age"] ==2){return "#B4BC37"}	
+							else if (p["age"] ==3){return "#28CB06"}	
+							else if (p["age"] ==4){return "#22987A"}		
+							else if (p["age"] ==5){return "#5761C8"}
+							}).on("mouseover", function(d){ 
+							dict_gender = {0:'Male',1:'Female'}; 
+							dict_age = {0:'0-10',1:'11-20',2:'21-40',3:'41-60',4:'61-80',5:'>80'};
+							console.log(d['x'],d['y']);
+							tooltext.text("age: " + dict_age[d["age"]] + "\n\n" +"gender: " +dict_gender[d["gender"]]+"\nSize: "+cluster_data.length);
+							return tooltext.style("visibility", "visible");})
+							.on("mousemove", function(){return tooltext.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})/////*************
+							.on("mouseout", function(){
+							return tooltext.style("visibility", "hidden");}) 
+							.on("click",function(d){
+							cluster_data = cluster(d,4);
+							clicked(cluster_data);
+							});}
+					clicked(cluster_data);
+							
+					
+					});/*
 					.on("mouseup",function(d){
 					console.log("mouse-up");
 					draw_deaths();*/
@@ -319,46 +384,75 @@
 						.text(tool_val);*/
 					
 				//idk
-				d3.select('#main2').selectAll('ellipse')
+				/*selection_ddays.selectAll('ellipse')
 							.data(data_ddays)
 							.transition()
 							.attr("cx",function(d,i) {
-							   return  i * (15)+100;
+							   return  i * (15)+50;
 							})
 							.attr("cy", function(d) {
-								return (1 - (d['deaths'] * 4))/2+400; 
+								return ((1 - d['deaths']) * 4)/2+400; 
 							})
 							.attr("rx",5)
 							.attr("ry", 5)
-							.attr("fill","#DF9D08");
+							.attr("fill","#DF9D08");*/
 			   //idk
 				/*d3.select("#tooltip").classed("hidden", false); 
 			   })
 			   .on("mouseout", function() {
 					d3.select("#tooltip").classed("hidden", true)
 					});*/
-				d3.select("span").on("click", function(){
+				d3.select("span").on("click", function(){ 
 					selection_zoom.selectAll('circle').remove();
-					draw_deaths("bygender");
-			    });  
+					selection_zoom.selectAll('circle') 
+					   .data(deaths_age_sex)
+					   .enter()
+					   .append('circle') 
+					   .attr("cx",function(d) {
+						   return  d["x"]*mul+add_x;
+					   })
+					   .attr("cy", function(d) {
+			   		return (1-d["y"]*mul)+add_y;
+					})
+					.attr("r", 2)
+					.attr("fill",function(d){
+				if (d["gender"] ==0) {return "blue"}
+				else if (d["gender"] ==1){return "#F905C5"}
+			    })
+				.on("mouseover", function(d,i){
+				var g;
+				if(d.gender==0){
+				g="Male"}
+				else{
+				g="Female"}
+				tool_val='Gender: '+g;
+					
+					tooltext1.text(tool_val); return tooltext1.style("visibility", "visible");})
+					
+					.on("mousemove", function(){
+					return tooltext1.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})/////*************
+					.on("mouseout", function(){ 
+					return tooltext1.style("visibility", "hidden")})});
+  
 				
 				//call to death_data
-				d3.select('#main2').selectAll('ellipse')
+				/*selection_ddays.selectAll('ellipse')
 							.data(data_ddays)
 							.transition()
 							.attr("cx",function(d,i) {
-							   return  i * (15)+100;
+							   return  i * (15)+50;
 							})
 							.attr("cy", function(d) {
-								return (1 - (d['deaths'] * 4))/2+400; 
+								return ((1 - d['deaths']) * 4)/2+400; 
 							})
 							.attr("rx",5)
 							.attr("ry", 5)
-							.attr("fill","#DF9D08");
+							.attr("fill","#DF9D08");*/
+
 			   
 			   d3.select("b").on("click", function(){
 					d3.select('#main1').selectAll('circle').remove();
-					draw_deaths('byage');
+					draw_deaths();
 					
 			   
 				});
@@ -366,15 +460,16 @@
 				} 
 				
 				function draw_ddays(){ 
-					
-					var selection_ddays = d3.select('#main2').selectAll('ellipse').data(data_ddays).enter().append('ellipse');
-					
-					selection_ddays
+		//(1-d[1]["y"])*mul+add_y
+					selection_ddays.selectAll('ellipse')
+					.data(data_ddays)
+					.enter()
+					.append('ellipse')
 					.attr("cx", function(d, i) {
 						return i * (15)+50;
 					 })
 					 .attr("cy", function(d) {
-						return 400; 	
+						return (1 - (d['deaths'] * 4))/2+400; 	
 					 })
 					 .attr("rx",5)
 					 .attr("ry", 5)
@@ -391,7 +486,8 @@
 						for (let l=0; l<total_deaths; l++){
 						new_data.push(deaths_age_sex[l])
 						}
-					//console.log(new_data);
+
+						//console.log(new_data);
 					
 					//var selection_deaths = d3.select('#main1').selectAll('circle').data(deaths_age_sex).enter().append('circle');
 					
@@ -400,10 +496,10 @@
 					   .enter()
 					   .append('circle')
 					   .attr("cx",function(p) {
-						   return  p["x"]*20+75;
+						   return  p["x"]*mul+add_x;
 					   })
 					   .attr("cy", function(p) {
-			   		return (1-p["y"]*20 +400);
+			   		return (1-p["y"])*mul+add_y;
 						})
 						.attr("r", 3)
 						.attr("fill",function(p){
@@ -416,7 +512,7 @@
 							});
 						
 						
-						tool_val='Date: '+d['date']+',\n\n Deaths: '+d['deaths']+'\n\n Total_deaths: '+total_deaths
+					tool_val='Date: '+d['date']+',\n\n Deaths: '+d['deaths']+'\n\n Total_deaths: '+total_deaths
 					
 					tooltext1.text(tool_val); return tooltext1.style("visibility", "visible");})
 					.on("mousemove", function(){
@@ -424,11 +520,10 @@
 					.on("mouseout", function(){ 
 					
 					d3.select('#main1').selectAll('circle').remove();
-					draw_deaths('byage');
+					draw_deaths();
 					return tooltext1.style("visibility", "hidden")});
 					 
-					 
-					 /*.on("mouseover", function(d,i) {
+					 /*.on("mouseover", function(d,i) { 
 						console.log(d);	
 						//Get this sircle x/y values, then augment for the tooltip
 						var xPosition = parseFloat(d3.select(this).attr("cx")) + (i*(20) /2) ;
@@ -441,8 +536,6 @@
 						}
 						tool_val='Date: '+d['date']+',\n\n Deaths: '+d['deaths']+'\n\n Total_deaths: '+total_deaths
 						console.log(xPosition,yPosition,tool_val);
-						
-						
 						d3.select("#tooltip1")
 							.style("left", xPosition + "px") 
 							.style("top", yPosition + "px")						
@@ -454,28 +547,316 @@
 						d3.select("#tooltip1").classed("hidden", true)
 					});*/
 					
-					function dd_data_transition(){
-						d3.select('#main2').selectAll('ellipse')
+					/*function dd_data_transition(){
+						selection_ddays.selectAll('ellipse')
 							.data(data_ddays)
 							.transition()
 							.attr("cx",function(d,i) {
-							   return  i * (15)+100;
+							   return  i * (15)+50;
 							})
 							.attr("cy", function(d) {
-								return (1 - (d['deaths'] * 4))/2+400; 
+								return ((1 - d['deaths']) * 4)/2+400; 
 							})
 							.attr("rx",5)
 							.attr("ry", 5)
-							.attr("fill","#DF9D08");
+							.attr("fill","#DF9D08");*/
 					}
-}
-			   
-			  
-			   
+			// adding legend
+			var data = ["age: 0-10","age: 11-20","age: 21-40", "age: 41-60", "age: 61-80", "age: >80","gender: Female","gender: Male","WorkHouse","Brewery","Pumps"]; //https://stackoverflow.com/questions/42009622/how-to-create-a-horizontal-legend
+			var n = (data.length+1)/2;
+			var itemWidth =120;
+			var itemHeight = 40;
+			var width = 500;
+
+			var svg = d3.select("svg");
+
+
+			var color = ["#FF0000", "#DF9D08", "#B4BC37", "#28CB06", "#22987A" ,"#5761C8","#F905C5","blue","green","brown","#B61869"];
+
+			var legendGroup = svg.append("g")
+				.attr("transform", "translate("+(40)+",50)");
+
+			var legend = legendGroup.selectAll(".legend")
+				.data(data)
+				.enter()
+				.append("g")
+				.attr("transform", function(d,i) { return "translate(" + i%n * itemWidth + "," + Math.floor(i/n) * itemHeight + ")"; })
+				.attr("class","legend");
 				
+			var rects = legend.append('rect')
+				.attr("width",120)
+				.attr("height",30)
+				.attr("fill", function(d,i) { return color[i]; });
+				
+			var text = legend.append('text')
+				.attr("x", 14)
+				.attr("y",18)
+				.attr("fill","black")
+				.text(function(d) { return d; });
+				
+			//adding st names
+			var street_names=[{'name':"Oxford Street",'x':10.94726 ,'y':15.8859,'rotate': -10},   
+                  {'name':"Regents Quadrant",'x':13.97751 ,'y':-1,'rotate': 0}, 
+                  {'name':"Berwick Street",'x':15.13782 ,'y':15.63142,'rotate':68},  
+				  {'name':"Poland Street",'x':14.495694 ,'y':15.51775,'rotate':67},  
+				  {'name':"Regent Street",'x':9.280715  ,'y':10.076829,'rotate':65}]; 
+			for(var i=0; i<street_names.length;i++){
+			//console.log(d)
+							if(i<2){
+							selection_zoom.append("text")
+							.attr("transform", "rotate(" + street_names[i].rotate + " " + street_names[i].x + "," + street_names[i].y + ")")
+							.attr("x", street_names[i].x*20+50)
+							.attr("y", 1-street_names[i].y*18+425) 
+							.style("font-size", "14px")
+							.text(street_names[i].name);
+							}
+							else if(i==4)
+							{
+							selection_zoom.append("text")
+							.attr("transform", "rotate(" + street_names[i].rotate + " " + street_names[i].x + "," + street_names[i].y + ")")
+							.attr("x", street_names[i].x*20+110)
+							.attr("y", 1-street_names[i].y*18+95) 
+							.style("font-size", "14px")
+							.text(street_names[i].name);
+							}
+							else if(i==3)
+							{
+							selection_zoom.append("text")
+							.attr("transform", "rotate(" + street_names[i].rotate + " " + street_names[i].x + "," + street_names[i].y + ")")
+							.attr("x", street_names[i].x*20-40)
+							.attr("y", 1-street_names[i].y*22+95) 
+							.style("font-size", "14px")
+							.text(street_names[i].name);
+							}
+							else
+							{
+							selection_zoom.append("text")
+							.attr("transform", "rotate(" + street_names[i].rotate + " " + street_names[i].x + "," + street_names[i].y + ")")
+							.attr("x", street_names[i].x*17)
+							.attr("y", 1-street_names[i].y*22+65) 
+							.style("font-size", "14px")
+							.text(street_names[i].name);
+							}
+			}
+			
+			selection_zoom
+			.append("rect")
+			.attr("width",20)
+			.attr("height",20)
+			.attr("x",12.3*20+77)
+			.attr("y",1-12*20+400)
+			.attr("fill", function(d,i) { return "green" })
+			.on("mouseover", function(d,i){ 
+						
+					tool_val='Work House'
+					
+					tooltext1.text(tool_val); return tooltext1.style("visibility", "visible");})
+			.on("mousemove", function(){
+					return tooltext1.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})/////*************
+			.on("mouseout", function(){ 
+				return tooltext1.style("visibility", "hidden")});
+				
+			selection_zoom
+			.append("rect")
+			.attr("width",20)
+			.attr("height",20)
+			.attr("x",16.2*20+77)
+			.attr("y",1-9.8*20+400)
+			.attr("fill", function(d,i) { return "brown" }) 
+			.on("mouseover", function(d,i){ 
+						
+					tool_val='Brewery'
+					
+					tooltext1.text(tool_val); return tooltext1.style("visibility", "visible");})
+			.on("mousemove", function(){
+					return tooltext1.style("top", (d3.event.pageY-20)+"px").style("left",(d3.event.pageX+20)+"px");})/////*************
+			.on("mouseout", function(){ 
+				return tooltext1.style("visibility", "hidden")});
+			
+			new_name = {'name':"Number of Deaths",'x':160.13782 ,'y':135.83142,'rotate':-90};
+			selection_ddays.append("text")
+							.attr("transform", "rotate(" + new_name.rotate + " " + new_name.x + "," + new_name.y + ")")
+							.style("font-size", "14px")
+							.text(new_name.name);
+
+			
+			function draw_donut(){
+			//Width and height
+			var w = 400;
+			var h = 400;
+			  
+			var selection_donut = d3.select("#donut")
+			.attr("transform", "translate(80,20)");
+			var dataset = [age_group_1,age_group_2,age_group_3,age_group_4,age_group_5,age_group_6];
+			console.log(dataset);
+			                
+            var age= ["0-10","11-20","21-40","41-60","61-80",">80"];
+			
+			var outerRadius = w / 2.5;
+			var innerRadius = w / 4.5;
+			var arc = d3.svg.arc()
+						.innerRadius(innerRadius)
+						.outerRadius(outerRadius); 
+			var pie = d3.layout.pie();
+			var color = d3.scale.ordinal()
+			            .domain(dataset)
+                        .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56","blue"]);
+			var arcs = selection_donut.selectAll("g.arc")
+						  .data(pie(dataset))
+						  .enter()
+						  .append("g")
+						  .attr("class", "arc")
+						  .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
+
+			arcs.append("path")
+			    .attr("fill", function(d, i) {
+			    	return color(i);
+			    })
+			    .attr("d", arc);
+			
+			//Labels1
+			arcs.append("text")
+			    .attr("transform", function(d) {
+			    	return "translate(" + arc.centroid(d) + ")";
+			    })
+			    .attr("text-anchor", "middle")
+			    .text(function(d,i) {
+			    return "Age:" + age[i] ;
+			    });
+				//labels2
+			arcs.append("text")
+			    .attr("transform", function(d) {
+			    	return "translate(" + arc.centroid(d) + ")";
+			    })
+			    .attr("text-anchor", "middle")
+				.attr("y",+15)
+			    .text(function(d,i) {
+			    return "Deaths:"+d.value ;
+			    });
+			}
+			
+
+			var tooltip = d3.select("body")   //ref:https://chartio.com/resources/tutorials/how-to-show-data-on-mouseover-in-d3js/
+				.append("div")  
+				.style("position", "absolute")
+				.style("z-index", "20")
+				.style("width","")
+				//.style("height","50")
+				.style("visibility", "hidden")
+				.style("background", "#ADD8E6")
+				.text("");
+
+			var deaths_pie=[];
+			var piechart=[]
+			var male=0;
+			var female=0;
+
+			d3.csv('deaths_age_sex.csv', function(data){
+				deaths_gender=data;
+				//console.log(deaths_bar)
+
+			for(let i=0;i<deaths_gender.length;i++){
+			if(deaths_gender[i]['gender']==0){
+			male+=1;
+			}
+			if(deaths_gender[i]['gender']==1){
+			female+=1;
+			}
+			}
+			//sum=age0+age1+age2+age3+age4+age5;
+			//console.log(sum);
+			genderchart=[male,female];
+					  //Math.round((age4*100)/sum
+			console.log(genderchart)
+			drawPiechart();
+			});
+			function drawPiechart(){
+			for (var i=0;i<deaths_gender.length; i++){
+						if (deaths_gender[i]["age"] ==0){ deaths_gender[i]["gender"]="Male"} 
+				   
+				   else if (deaths_gender[i]["age"] ==1){  deaths_gender[i]["gender"]="Female"}
+				
+				   
+			}
+			 console.log(deaths_gender);
+
+
+
+			var svg = d3.select("#pie")
+			.attr("transform", "translate(80,20)");
+			//Width and height
+			var w = 400;
+			var h = 400;
+
+			var gender = ["Male","Female"];
+			var gender_deaths=[male,female];
+			//console.log(dataset);
+
+			var outerRadius = w / 2.5;
+			var innerRadius = 0;
+			var arc = d3.svg.arc()
+						.innerRadius(innerRadius)
+						.outerRadius(outerRadius);
+			
+			var pie = d3.layout.pie();
+			
+			//Easy colors accessible via a 10-step ordinal scale
+			var color = d3.scale.category10();
+
+			//Create SVG element
 			
 			
+			//Set up groups
+			var arcs = svg.selectAll("g.arc")
+						  .data(pie(genderchart))
+						  .enter()
+						  .append("g")
+						  .attr("class", "arc")
+						  .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
 			
+			//Draw arc paths
+			arcs.append("path")
+			    .attr("fill", function(d, i) {
+			    	return color(i);
+			    })
+			    .attr("d", arc);
+			
+			//Labels
+			arcs.append("text")
+			    .attr("transform", function(d) {
+			    	return "translate(" + arc.centroid(d) + ")";
+			    })
+			    .attr("text-anchor", "middle")
+				.attr("font-size","12px")
+				.attr("fill","white")
+				.attr("font-family","sans-serif")
+				
+				.text(function(d,i) {
+			    	return "Gender:" + gender[i];}) 
+			arcs.append("text")
+			    .attr("transform", function(d) {
+			    	return "translate(" + arc.centroid(d) + ")";
+			    })
+			    .attr("text-anchor", "middle")
+				.attr("font-size","12px")
+				.attr("fill","white")
+				.attr("font-family","sans-serif")
+				.attr("y",20)
+				
+				.text(function(d,i) {
+			    	return "Deaths:" +gender_deaths[i];}) 
+			  
+				
+				.on("mouseover",(function(d,i){tooltip.text("Gender:" + gender[i] + "\n" +"Deaths:" + gender_deaths[i]); return tooltip.style("visibility", "visible");}))
+       .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+       .on("mouseout", function(){return tooltip.style("visibility", "hidden")});
+			}
+				
+
+							
+			//<line x1="50" x2="700" y1="420" y2="420" stroke="black"></line>
+			//<line x1="50" x2="50" y1="100" y2="420" stroke="black"></line>
+							
 			
 		</script>
 	</body>
