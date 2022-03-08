@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Data Visualization Project Documentation</title>
+</head>
+<body>
+
+<h1>Recreating Dr.John Snow's Cholera Map using D3</h1>
+<a href="draw_streets_1_temp.html" target="_blank" style="font-size:20;color:blue;">Visualization</a>
+<h3>Introduction:</h3>
+<p>Dr. John Snow created a map that shows the deaths in London,1854 due to cholera. The map has helped to gain some insights for the reason of deaths and provided evidence that there is a relation between contaminated water and cholera. As part of the project, I’m recreating Dr. John Snow’s Cholera map using D3.</p>
+<h3>Design process:</h3>
+<p>Taking a look at the data given I have worked on how the data can be shown in different views.
+<br>I have decided to show the data in terms of deaths by age, gender and also number of deaths for each day.</p>
+<p>To visualize the data in different terms, I decided on using different charts and chose the best ones that fit to the data.</p>
+<img src="ss_3.jpeg" alt="ss_3" width="500" height="500">
+<h3>Design choices:</h3>
+<p>-I used shapes to represent the different points that go on the map like pumps and deaths in the city.</p>
+<p>-To differentiate between the given age groups and gender, I chose colors. Each age group and gender are represented by separate color.</p>
+<p>-I have constructed a map that shows the streets and some important places like workhouse, brewery of the London city.</p>
+<p>-Then plotted pumps and deaths occurred in different streets of the city as circles, they together make a scatter plot.</p>
+<p>-In addition, I have added street names and workhouse, brewery by observing the original map and placed them relatively in the streets map.</p>
+<p>-To represent the deaths occurred on each day in the given time frame, I plotted a scatter plot.</p>
+<p>-I used pie chart to see the deaths in terms of gender and a doughnut chart to show the deaths by age, as both the charts give a vivid view of the different groups in the data.</p>
+<p>Apart from the charts, to make the visualization more interactive, I have implemented some functionalities and they are:</p>
+<p>-The visualization makes users to filter deaths by age and gender.</p>
+<p>-Hovering over deaths on the map gives details of that death like the age and gender.</p>
+<p>-Hovering on a data point on the scatter plot that shows deaths occurred on each day, the total deaths till that date filtered on the map and also gives information of the date, deaths occurred on that date and total deaths till that date.</p>
+<p>-A zoom functionality has been provided, using which users can zoom in, zoom out and pan the streets map.</p>
+<p>-The deaths on the street map can be clustered into groups by clicking on a death point. It gives the deaths that happened within a radius of 2.</p>
+<p>-By clicking a point in the obtained cluster, deaths within the radius of 4 from that point will be obtained.</p>
+<h3>Conclusions:</h3>
+<p>From the visualization, I could observe the following:</p>
+<p>-There are more deaths in the age groups 0-10 and >80.</p>
+<p>-More female deaths have occurred than male deaths, but the difference in deaths is quite small.</p>
+<img src="ss_2.png" alt="ss_2" width="1000" height="600">
+<p>-The epidemic has reached a peak stage in the early September and then gradually decreased.</p>
+<p>-More number of deaths can be seen in the area of pump, which is near to workhouse and brewery and it shows that the water from that pump is more contaminated.</p>
+<img src="ss_1.png" alt="ss_1" width="1000" height="600">
+<h3>References:</h3>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+ 
+
