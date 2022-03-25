@@ -404,7 +404,7 @@
 			   .on("mouseout", function() {
 					d3.select("#tooltip").classed("hidden", true)
 					});*/
-				d3.select("span").on("click", function(){ 
+			d3.select("span").on("click", function(){ 
 					selection_zoom.selectAll('circle').remove();
 					selection_zoom.selectAll('circle') 
 					   .data(deaths_age_sex)
@@ -414,7 +414,7 @@
 						   return  d["x"]*mul+add_x;
 					   })
 					   .attr("cy", function(d) {
-			   		return (1-d["y"]*mul)+add_y;
+			   		return (1-d["y"])*mul+add_y;
 					})
 					.attr("r", 2)
 					.attr("fill",function(d){
