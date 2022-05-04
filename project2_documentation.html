@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Analysis of Movies and TV Shows on Netflix</title>
+</head>
+<body>
+
+<h1>Analysis of Movies and TV Shows on Netflix </h1>
+<a style="color:blue;font-size:20;margin-right:20px;" href="index.html" target="_self">Back to Visualization</a>
+<h3>Introduction:</h3>
+<p>Netflix is a popular OTT platform that has several movies and TV shows of different genres and multiple languages. It has millions of subscribers from all over the world and apart from containing several movies and TV shows, Netflix also provides the users with the show’s ratings, cast details, and descriptions of the shows.We are creating a visualization to analyze the movies and tv shows on Netflix using javascript and D3.</p>
+<h3>Methodology:</h3>
+<p>Started with understanding the data and how the data can be represented using the available charts and which suits the best to visualize the data to get an overview of the information provided in the data.
+<br>After going through the data thoroughly, decided on what charts to use to represent them.</p>
+<p>Then moved on to constructing the required charts and maps to complete the visualization as decided from the initial work on the data.</p>
+
+<h3>Components:</h3>
+<p><b>Map:</b>The world map is onstructed using d3 to represent the movies and tv shows according to the country where the show was produced.</p>
+<p><b>Scatter plot:</b>A scatter plot was used to show the Netflix shows released in each year from 1925 to 2021. Scatter plot was used because it best suits for the representation of time series data .</p>
+<p><b>Bar chart:</b>To understand the shows by genre, and by the duration with the data in the netflix data file, we chose Bar chart to depict the data as we want to compare the shows of genre and duration respectively.</p>
+<p><b>Pie chart:</b>There are different rating groups and to represent the shows by rating we have used pie charts.</p>
+
+
+<h3>Interactivity:</h3>
+<p>To make the visualization interactive we have added the following to the visualization:</p>
+<ul>
+  <li>Allowing users to filter the tv shows by movies or tv shows using radio buttons.</li>
+  <li>When hovering over the points in the map, scatter plot, bar and pie charts , user can see the respective details of the shows.</li>
+  <li>Map and scatter plot are correlated in a way that when clicking over a country on the map,the scatter plot will change according the shows released each year from that country.</li>
+  <li> In the same way, when a point on the scatter plot is clicked, the shows of that year released from countries will be given on the world map.</li>
+  <li>The genre and ratings are linked in a way that when a bar of a particular genre is clicked on the bar chart, the rating distribution of all shows of that genre will be given in the pie chart</li>
+<li>Zoom functionality has been provided, using which the world map can be zoomed in and out, also panning can be done.</li>
+<li>We have also provided the functionality that when user clicks on the bars of bar chart for shows by duration,the details of those shows will be given in a table format.</li>
+</ul>
+<h3>Observations:</h3>
+
+<p>Visualization has been helpful in understanding the data more and to get insights, which would have been very difficult by just looking at the raw data provided. We could make the following observations from the visualization:</p>
+<ul><li>Movies released in each year were shown through scatterplot and when hovering over the points we get the shows count for that year.In 2018, highest number of shows with a count of 1147 were released.</li>
+<li>Most number of movies released in a year was 767 in 2017 and 2018. Most number of tv shows released in a year is 436 in the year 2020.</li></ul>
+<img src="result_1.png" alt="line" style="width:500px;height:400px;">
+<img src="result_1_2.png" alt="line" style="width:500px;height:400px;">
+<img src="result_1_3.png" alt="line" style="width:500px;height:400px;">
+<ul><li>USA has released most number of shows with a count of 3552 and it was highest in both movies and tv shows separately with a count of 2540 and 1012 respectively.</li></ul>
+<img src="result_2.png" alt="line" style="width:500px;height:400px;">
+<img src="result_2_1.png" alt="line" style="width:500px;height:400px;">
+<img src="result_2_2.png" alt="line" style="width:500px;height:400px;">
+<img src="result_2_3.png" alt="line" style="width:500px;height:400px;">
+<ul><li>We understood that highest and lowest rating can't be found as the ratings are given in the form of TV-MA,TV-14 and R. We have understood the distribution of different genre movies by rating by providing the interaction between bar graph of genre and pie chart of rating.</li></ul>
+<img src="bar.png" alt="bar" style="width:500px;height:400px;">
+<ul><li>Movies and TV shows were shown according to rating through the pie chart, again the most popular show based on rating could not be found because of the rating format, but the distribution of shows by rating was shown.The highest rating group is TV-MA
+with 36.42% and lowest rating group is NC-17 with 0.03%</li></ul>
+<img src="result_4.png" alt="pie" style="width:500px;height:400px;">
+<ul><li>In addition to the posed questions, we observed the shows by duration and got to know that hightest duration movie is 	Black Mirror: Bandersnatch with a duration of 312 min and tv show is Grey's Anatomy with 17 seasons.</li></ul>
+<img src="result_5.png" alt="pie" style="width:500px;height:400px;">
+<img src="result_5_1.png" alt="line" style="width:500px;height:400px;">
+<img src="result_5_2.png" alt="line" style="width:500px;height:400px;">
+<img src="result_5_3.png" alt="line" style="width:500px;height:400px;">
+<h3>References:</h3>
+<a  href="https://github.com/scotthmurray/d3-book" target="_blank">https://github.com/scotthmurray/d3-book</a><br>
+<a  href="https://www.d3-graph-gallery.com/graph/interactivity_zoom.html" target="_blank">https://www.d3-graph-gallery.com/graph/interactivity_zoom.html</a><br>
+<a  href="https://bl.ocks.org/cagrimmett/07f8c8daea00946b9e704e3efcbd5739 " target="_blank">https://bl.ocks.org/cagrimmett/07f8c8daea00946b9e704e3efcbd5739 </a><br>
+<a  href="https://chartio.com/resources/tutorials/how-to-show-data-on-mouseover-in-d3js/" target="_blank">https://chartio.com/resources/tutorials/how-to-show-data-on-mouseover-in-d3js/</a><br>
+<a  href="https://www.google.com/search?q=w3+schools&oq=w3+schools&aqs=chrome..69i57j69i59j0i10i512l3j69i60l3.3969j0j7&sourceid=chrome&ie=UTF-8" target="_blank">https://www.google.com/search?q=w3+schools&oq=w3+schools&aqs=chrome..69i57j69i59j0i10i512l3j69i60l3.3969j0j7&sourceid=chrome&ie=UTF-8</a>
+</body>
+</html>
